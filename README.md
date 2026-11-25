@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Alétheia — Red de Aprendizaje Cristiana
 
-## Getting Started
+Sitio web de CACVA/Alétheia con CMS integrado (Sanity).
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend:** Next.js 16 + TypeScript + CSS custom
+- **CMS:** Sanity (Studio embebido en `/studio`)
+- **Deploy:** Vercel
+
+## Setup rápido
+
+### 1. Crear proyecto en Sanity
+
+1. Ir a [sanity.io/manage](https://www.sanity.io/manage)
+2. Crear cuenta (gratis) y nuevo proyecto
+3. Copiar el **Project ID**
+4. En la configuración del proyecto, agregar CORS origin: `http://localhost:3000` y la URL de Vercel cuando la tengas
+
+### 2. Configurar variables de entorno
+
+Copiar `.env.example` → `.env.local` y completar:
+
+```
+NEXT_PUBLIC_SANITY_PROJECT_ID=tu-project-id
+NEXT_PUBLIC_SANITY_DATASET=production
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Instalar y correr
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Sitio: http://localhost:3000
+- CMS Studio: http://localhost:3000/studio
 
-## Learn More
+### 4. Deploy en Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Subir a GitHub: `git init && git add . && git commit -m "Initial" && git push`
+2. Ir a [vercel.com](https://vercel.com), importar el repo
+3. En Settings → Environment Variables, agregar:
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
+   - `NEXT_PUBLIC_SANITY_DATASET`
+4. Deploy automático
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 5. Configurar CORS en Sanity
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+En [sanity.io/manage](https://www.sanity.io/manage) → tu proyecto → API → CORS Origins:
+- Agregar `https://tu-dominio.vercel.app` (con credentials)
 
-## Deploy on Vercel
+## Contenido gestionable
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Los moderadores pueden gestionar desde `/studio`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Contenido | Schema |
+|-----------|--------|
+| Artículos de blog | `post` |
+| Testimonios | `testimonial` |
+| Cursos | `course` |
+| Libros (librería) | `book` |
+| Boletines | `newsletter` |
+| Descargables | `downloadable` |
+
+## Estructura
+
+```
+src/
+├── app/
+│   ├── (site)/          # Páginas públicas con Navbar/Footer
+│   │   ├── page.tsx     # Home
+│   │   ├── cursos/
+│   │   ├── nosotros/
+│   │   ├── recursos/    # Blog, Boletines, Librería, Descargables
+│   │   ├── comunidad/
+│   │   └── contacto/
+│   ├── studio/          # Sanity Studio CMS
+│   ├── layout.tsx
+│   └── globals.css
+├── components/          # Navbar, Footer, ScrollReveal
+├── sanity/schemas/      # Schemas del CMS
+└── lib/                 # Helpers de fetch
+```
